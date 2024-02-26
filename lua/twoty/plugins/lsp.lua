@@ -5,24 +5,18 @@ local lsp = {
     dependencies = {
         'williamboman/mason.nvim',
         'williamboman/mason-lspconfig.nvim',
-        "j-hui/fidget.nvim",
         { 'folke/neodev.nvim', opts = {} },
-        'jmederosalvarado/roslyn.nvim',
+        --'jmederosalvarado/roslyn.nvim', -- wait for better :(
     },
     config = function()
-        require('fidget').setup({})
         require('mason').setup()
         require('mason-lspconfig').setup({
-            ensure_installed = { 'lua_ls', 'clangd' },
+            ensure_installed = { 'lua_ls', 'clangd', 'csharp_ls' },
             handlers = {
                 function(server_name)
                    require('lspconfig')[server_name].setup({})
                 end,
             }
-        })
-
-        require('roslyn').setup({
-            capabilities = vim.lsp.protocol.make_client_capabilities()
         })
     end,
 }
@@ -40,22 +34,26 @@ local compy = {
     },
     config = function ()
         local cmp = require('cmp')
+
+        ---@type cmp.SelectOption
         local cmp_select = { behavior = cmp.SelectBehavior.Select }
+        ---@type cmp.Config
         cmp.setup({
             snippet = {
                 expand = function(args)
                     require('luasnip').lsp_expand(args.body)
                 end,
             },
+            ---@type cmp.WindowConfig
             window = {
-                 completion = cmp.config.window.bordered()
-            --     documentation = ...
-             },
+                 completion = cmp.config.window.bordered(),
+                 documentation = cmp.config.window.bordered()
+            },
             mapping = cmp.mapping.preset.insert({
                 ['['] = cmp.mapping.select_prev_item(cmp_select),
                 [']'] = cmp.mapping.select_next_item(cmp_select),
-                ['<Tab>'] = cmp.mapping.confirm(cmp_select),
-                ['<cr>'] = cmp.mapping.confirm(cmp_select),
+                ['<Tab>'] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace }),
+                ['<cr>'] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Insert }),
             }),
             sources = cmp.config.sources(
                 {
@@ -78,7 +76,6 @@ local trouble = {
         '<leader>p',
         '<leader>P',
     },
-    opts = { },
     config = function ()
         local opts = { noremap = true }
         vim.keymap.set('n', '<leader>u', function() require('trouble').toggle('lsp_references') end, opts)

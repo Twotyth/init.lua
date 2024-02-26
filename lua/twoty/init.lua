@@ -1,6 +1,6 @@
 require('twoty.set')
 require('twoty.remap')
-
+require('twoty.aucmds')
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({

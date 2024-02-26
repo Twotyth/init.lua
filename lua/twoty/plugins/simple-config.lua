@@ -1,13 +1,14 @@
 return {
-    { 'nvim-tree/nvim-web-devicons' },
+    'nvim-tree/nvim-web-devicons',
     {
         'levouh/tint.nvim',
-        config = function()
-            require('tint').setup{
-                tint = -7,
-                tint_background_colors = true
-            }
-        end
+        event = 'VeryLazy',
+        ---@type TintUserConfiguration
+        opts = {
+            saturation = 0.5,
+            tint = -7,
+            tint_background_colors = true,
+        }
     },
     {
         'theprimeagen/harpoon',
@@ -23,16 +24,28 @@ return {
     },
     {
         "folke/flash.nvim",
-        event = "VeryLazy",
-        ---@type Flash.Config
-        opts = {},
-        -- stylua: ignore
+        event = 'VeryLazy',
         keys = {
             { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
             { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
-            { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
-            { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
             { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
         },
+        ---@type Flash.Config
+        opts = {
+            labels = 'adweqrc',
+            label = {
+                reuse = 'all',
+                rainbow = { enabled = true, shade = 5 }
+            }
+        }
+    },
+    {
+        "j-hui/fidget.nvim",
+        event = 'VeryLazy',
+        opts = {
+            notification = {
+                override_vim_notify = true
+            }
+        }
     }
 }
