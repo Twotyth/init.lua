@@ -13,28 +13,28 @@ return {
                 -- git preview
                 map('n', 'gp', gs.preview_hunk_inline)
                 map('n', 'gd', gs.diffthis)
+                map('n', 'gu', gs.reset_hunk)
             end
         },
     },
     {
         'NeogitOrg/neogit',
-        event = 'VeryLazy',
+        keys = '<leader>g',
         config = function ()
             local neogit = require('neogit')
             neogit.setup({
                 graph_style = "unicode",
-                status = { recent_commit_count = 10 }
+                disable_context_highlighting = true,
+                status = { recent_commit_count = 10 },
+                signs = {
+                    section = { '', '' },
+                    item = { ' ', '' }
+                }
             })
-            vim.keymap.set('n', 'git', function ()
-                neogit.open( { kind = 'vsplit' } )
+            vim.keymap.set('n', '<leader>g', function ()
+                neogit.open( { kind = 'split' } )
                 vim.wo.wrap = true
             end)
         end
     },
-
-    setup_higroups = function ()
-        vim.api.nvim_set_hl(0, 'DiffAdd', { fg='none', bg='#1e2e23' })
-        vim.api.nvim_set_hl(0, 'DiffDelete', { fg='none', bg='#2a1d23' })
-        vim.api.nvim_set_hl(0, 'DiffChange', { fg='none', bg='#1e1d30' })
-    end
 }

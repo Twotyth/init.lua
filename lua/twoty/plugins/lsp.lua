@@ -50,8 +50,8 @@ local compy = {
                  documentation = cmp.config.window.bordered()
             },
             mapping = cmp.mapping.preset.insert({
-                ['['] = cmp.mapping.select_prev_item(cmp_select),
-                [']'] = cmp.mapping.select_next_item(cmp_select),
+                ['<c-donw>'] = cmp.mapping.select_prev_item(cmp_select),
+                ['<c-up>'] = cmp.mapping.select_next_item(cmp_select),
                 ['<Tab>'] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace }),
                 ['<cr>'] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Insert }),
             }),
@@ -71,12 +71,15 @@ local compy = {
 
 local trouble = {
     'folke/trouble.nvim',
-    keys = {
-        '<leader>u',
-        '<leader>p',
-        '<leader>P',
-    },
+    event = 'LspAttach',
     config = function ()
+        ---@type TroubleOptions
+        local setup_opts = {
+            signs = { error = '', hint = '', warning = '', },
+            position = 'right',
+        }
+
+        require('trouble').setup(setup_opts)
         local opts = { noremap = true }
         vim.keymap.set('n', '<leader>u', function() require('trouble').toggle('lsp_references') end, opts)
         vim.keymap.set('n', '<leader>p', function() require('trouble').toggle('document_diagnostics') end, opts)

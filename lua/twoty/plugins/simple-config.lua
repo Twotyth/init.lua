@@ -1,11 +1,15 @@
 return {
-    'nvim-tree/nvim-web-devicons',
+    {
+        'nvim-tree/nvim-web-devicons',
+        config = function ()
+            require('nvim-web-devicons').setup()
+        end
+    },
     {
         'levouh/tint.nvim',
-        event = 'VeryLazy',
+        lazy = true,
         ---@type TintUserConfiguration
         opts = {
-            saturation = 0.5,
             tint = -7,
             tint_background_colors = true,
         }
@@ -23,23 +27,6 @@ return {
         end,
     },
     {
-        "folke/flash.nvim",
-        event = 'VeryLazy',
-        keys = {
-            { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-            { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
-            { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
-        },
-        ---@type Flash.Config
-        opts = {
-            labels = 'adweqrc',
-            label = {
-                reuse = 'all',
-                rainbow = { enabled = true, shade = 5 }
-            }
-        }
-    },
-    {
         "j-hui/fidget.nvim",
         event = 'VeryLazy',
         opts = {
@@ -47,5 +34,39 @@ return {
                 override_vim_notify = true
             }
         }
+    },
+    {
+        'lukas-reineke/indent-blankline.nvim',
+        main = 'ibl',
+        event = 'BufReadPre',
+        ---@type ibl.config
+        opts = {
+            ---@type ibl.config.indent
+            indent = {
+                highlight = 'IndentBlanklineChar'
+            },
+            ---@type ibl.config.scope
+            scope = {
+                enabled = true,
+                show_end = false,
+                show_start = false,
+                highlight = 'IblIndent'
+            },
+        }
+    },
+    {
+        'RRethy/vim-illuminate',
+        event = 'BufReadPre',
+        lazy = false,
+        config = function ()
+            require('illuminate').configure({
+                providers = { 'treesitter', 'lsp' },
+                delay = 50,
+            })
+
+            vim.api.nvim_set_hl(0, 'IlluminatedWordText', { link = 'LspReferenceText' })
+            vim.api.nvim_set_hl(0, 'IlluminatedWordRead', { link = 'LspReferenceRead' })
+            vim.api.nvim_set_hl(0, 'IlluminatedWordWrite', { link = 'LspReferenceWrite' })
+        end
     }
 }

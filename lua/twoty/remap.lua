@@ -1,42 +1,72 @@
 vim.mapleader = ' '
 vim.maplocalleader = ' '
 
-local silent_opts = { silent = true }
+local ut = require('twoty.utils')
 
---vim.keymap.set('n', '<leader><leader>', '<cmd>w<cr>')
+-- == for outer node lsp formatting
+ut.map_noremap('n', '==', function()
+    local node = vim.treesitter.get_node()
+    if node == nil then
+        return
+    end
+
+    local start_row
+    local end_row
+    local start_col
+    local end_col
+    while (node:parent() and start_row == end_row) do
+        start_row, start_col, end_row, end_col = node:range()
+        node = node:parent()
+    end
+
+    local node_range = {
+        ['start'] = { start_row + 1, start_col },
+        ['end'] = { end_row + 1, end_col },
+    }
+    vim.lsp.buf.format({ range = node_range })
+    vim.diagnostic.show(nil, 0) -- formatting messess up virtual text
+
+    -- prettier
+    ut.flash_region_cur_buf(nil, node_range['start'][1] - 1, node_range['end'][1] - 1)
+    vim.notify('Formatted ' .. end_row + 1 - start_row .. ' rows', 2)
+end)
 
 -- insert new line on enter in normal mode
-vim.keymap.set('n', '<cr>', 'o<esc>')
-
--- break to next line
-vim.keymap.set('n', '<s-cr>', 'viW"_y<cr>')
+ut.map('n', '<M-o>', 'o<esc>')
 
 
-vim.keymap.set({'n', 'v'}, '<S-up>', '5<up>')
-vim.keymap.set({'n', 'v'}, '<S-down>', '5<down>')
+ut.map_noremap({ 'n', 'v' }, '<S-up>', '5<up>')
+ut.map_noremap({ 'n', 'v' }, '<S-down>', '5<down>')
 
 -- persistant undo
-vim.keymap.set('n', 'U', '<C-r>')
+ut.map('n', 'U', '<C-r>')
 
 -- move lines on alt + arrow
-vim.keymap.set('v', '<A-up>',  ":m '<-2<CR>gv=gv", silent_opts)
-vim.keymap.set('v', '<A-down>', ":m '>+1<CR>gv=gv", silent_opts)
-vim.keymap.set('n', '<A-up>', ":m-2<CR>==", silent_opts)
-vim.keymap.set('n', '<A-down>', ":m+1<CR>==", silent_opts)
+ut.map_silent('v', '<A-up>', ":m '<-2<CR>gv=gv")
+ut.map_silent('v', '<A-down>', ":m '>+1<CR>gv=gv")
+ut.map_silent('n', '<A-up>', ":m-2<CR>==")
+ut.map_silent('n', '<A-down>', ":m+1<CR>==")
 
 -- cursor next/prev
-vim.keymap.set('n', '{', '<C-o>')
-vim.keymap.set('n', '}', '<C-i>')
+ut.map('n', '{', '<C-o>')
+ut.map('n', '}', '<C-i>')
 
-vim.keymap.set('n', '<A-v>', '<C-v>')
+ut.map('n', '<A-v>', '<C-v>')
 
 -- debinded
-vim.keymap.set('n', 'Q', '<nop>')
+ut.map('n', 'Q', '<nop>')
+ut.map('n', 'h', '<nop>')
+ut.map('n', 'j', '<nop>')
+ut.map('n', 'k', '<nop>')
+ut.map('i', '<c-k>', '<nop>')
+ut.map('n', 'l', '<nop>')
 
-vim.keymap.set('n', 'rwp', 'viwpyiw')
-vim.keymap.set('n', 'rWp', 'viWpyiW')
-vim.keymap.set('n', 'rwP', 'viwPyiw')
-vim.keymap.set('n', 'rWP', 'viWPvyiW')
+-- text manipulation
+
+ut.map('n', 'rwp', 'viwpyiw')
+ut.map('n', 'rWp', 'viWpyiW')
+ut.map('n', 'rwP', 'viwPyiw')
+ut.map('n', 'rWP', 'viWPvyiW')
 
 -- make d just delete, leave x for cut
-vim.keymap.set('n', 'd', '"_d')
+ut.map('n', 'd', '"_d')

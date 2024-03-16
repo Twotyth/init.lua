@@ -10,7 +10,17 @@ local treesitter = {
             sync_install = false,
             highlight = { enable = true },
             indent = { enable = true },
+            incremental_selection = {
+                enable = true,
+                keymaps = {
+                    init_selection = '<tab>',
+                    node_incremental = '<tab>',
+                    node_decremental = '<s-tab>',
+                }
+            }
         })
+
+        require('twoty.utils').map_noremap('n', '<leader>i', vim.inspect_pos)
     end
 }
 

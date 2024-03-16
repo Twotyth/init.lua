@@ -34,6 +34,36 @@ vim.cmd('lan en_US');
 vim.g.netrw_banner = 0
 vim.g.netrw_browse_split = 0
 
+
+local max_width = math.max(math.floor(vim.o.columns * 0.7), 100)
+local max_height = math.max(math.floor(vim.o.lines * 0.3), 30)
+local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+
+
+function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+    opts = opts or {}
+    opts.border = opts.border or 'rounded'
+    opts.max_width = opts.max_width or max_width
+    opts.max_height = opts.max_height or max_height
+    return orig_util_open_floating_preview(contents, syntax, opts, ...)
+end
+
+local signs = {
+  { name = 'DiagnosticSignError', text = ' ' },
+  { name = 'DiagnosticSignWarn', text = ' ' },
+  { name = 'DiagnosticSignHint', text = ' ' },
+  { name = 'DiagnosticSignInfo', text = ' ' },
+}
+
+for _, sign in ipairs(signs) do
+    vim.fn.sign_define(sign.name, {
+        texthl = sign.name,
+        text = sign.text,
+        lineh = sign.name,
+        numhl = '',
+    })
+end
+
 vim.diagnostic.config({
     update_in_insert = true,
     severity_sort = true,
