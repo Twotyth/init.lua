@@ -20,6 +20,8 @@ local treesitter = {
             }
         })
 
+        vim.opt.foldmethod = 'expr'
+        -- vim.opt.foldexpr =
         require('twoty.utils').map_noremap('n', '<leader>i', vim.inspect_pos)
     end
 }

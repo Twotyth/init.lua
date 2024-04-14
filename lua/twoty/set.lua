@@ -35,6 +35,8 @@ vim.g.netrw_banner = 0
 vim.g.netrw_browse_split = 0
 
 
+-- vim.opt.fold
+
 local max_width = math.max(math.floor(vim.o.columns * 0.7), 100)
 local max_height = math.max(math.floor(vim.o.lines * 0.3), 30)
 local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview

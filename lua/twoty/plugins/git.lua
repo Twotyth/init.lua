@@ -12,8 +12,8 @@ return {
                 local gs = package.loaded.gitsigns
                 -- git preview
                 map('n', 'gp', gs.preview_hunk_inline)
-                map('n', 'gd', gs.diffthis)
-                map('n', 'gu', gs.reset_hunk)
+                -- map('n', 'gd', gs.diffthis)
+                -- map('n', 'gu', gs.reset_hunk)
             end
         },
     },
