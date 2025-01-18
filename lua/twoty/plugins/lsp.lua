@@ -5,87 +5,78 @@ local lsp = {
     dependencies = {
         'williamboman/mason.nvim',
         'williamboman/mason-lspconfig.nvim',
-        { 'folke/neodev.nvim', opts = {} },
-        --'jmederosalvarado/roslyn.nvim', -- wait for better :(
+        'Decodetalkers/csharpls-extended-lsp.nvim',
+        'Saghen/blink.cmp',
     },
     config = function()
+        local function capabilities(opts)
+            return require 'blink.cmp'.get_lsp_capabilities(opts or {})
+        end
         require('mason').setup()
         require('mason-lspconfig').setup({
-            ensure_installed = { 'lua_ls', 'clangd', 'csharp_ls' },
+            ensure_installed = { 'lua_ls', 'clangd', 'omnisharp', 'gopls' },
             handlers = {
                 function(server_name)
-                   require('lspconfig')[server_name].setup({})
+                    require('lspconfig')[server_name].setup(capabilities())
                 end,
-            }
+                ['csharp_ls'] = function()
+                    local config = {
+                        handlers = {
+                            ["textDocument/definition"] = require('csharpls_extended').handler,
+                            ["textDocument/typeDefinition"] = require('csharpls_extended').handler,
+                        },
+                    }
+
+                    require('lspconfig').csharp_ls.setup(capabilities(config))
+                end
+            },
         })
     end,
 }
 
-local compy = {
-    'hrsh7th/cmp-nvim-lsp',
-    event = "InsertEnter",
-    dependencies = {
-        'hrsh7th/cmp-buffer',
-        'hrsh7th/cmp-path',
-        'hrsh7th/cmp-cmdline',
-        'hrsh7th/nvim-cmp',
-        'L3MON4D3/LuaSnip',
-        'saadparwaiz1/cmp_luasnip',
-    },
-    config = function ()
-        local cmp = require('cmp')
-
-        ---@type cmp.SelectOption
-        local cmp_select = { behavior = cmp.SelectBehavior.Select }
-        ---@type cmp.Config
-        cmp.setup({
-            snippet = {
-                expand = function(args)
-                    require('luasnip').lsp_expand(args.body)
-                end,
-            },
-            ---@type cmp.WindowConfig
-            window = {
-                 completion = cmp.config.window.bordered(),
-                 documentation = cmp.config.window.bordered()
-            },
-            mapping = cmp.mapping.preset.insert({
-                ['<c-donw>'] = cmp.mapping.select_prev_item(cmp_select),
-                ['<c-up>'] = cmp.mapping.select_next_item(cmp_select),
-                ['<Tab>'] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace }),
-                ['<cr>'] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Insert }),
-            }),
-            sources = cmp.config.sources(
-                {
-                    { name = 'nvim_lsp' },
-                    { name = 'luasnip' },
-                },
-                {
-                    { name = 'buffer' },
+local blinkcmp = {
+    'Saghen/blink.cmp',
+    lazy = false,
+    version = '*',
+    ---@type blink.cmp.Config
+    opts = {
+        sources = {
+            default = { 'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
+            providers = {
+                lazydev = {
+                    name = 'LazyDev',
+                    module = 'lazydev.integrations.blink',
+                    score_offset = 100,
                 }
-            )
-        })
-    end
+            },
+        },
+        keymap = { preset = 'default' },
+        completion = {
+            documentation = {
+                auto_show = true,
+                window = { border = 'rounded' },
+            },
+        },
+    }
 }
-
 
 local trouble = {
     'folke/trouble.nvim',
     event = 'LspAttach',
-    config = function ()
-        ---@type TroubleOptions
-        local setup_opts = {
-            signs = { error = '', hint = '', warning = '', },
-            position = 'right',
-        }
-
-        require('trouble').setup(setup_opts)
-        local opts = { noremap = true }
-        vim.keymap.set('n', '<leader>u', function() require('trouble').toggle('lsp_references') end, opts)
-        vim.keymap.set('n', '<leader>p', function() require('trouble').toggle('document_diagnostics') end, opts)
-        vim.keymap.set('n', '<leader>P', function() require('trouble').toggle('workspace_diagnostics') end, opts)
-    end
-
+    ---@type trouble.Config
+    opts = {
+        auto_refresh = false,
+        focus = true,
+        preview = { scratch = false },
+    },
 }
 
-return { lsp, compy, trouble }
+return {
+    lsp,
+    blinkcmp,
+    trouble,
+    {
+        'artemave/workspace-diagnostics.nvim',
+        event = 'LspAttach'
+    }
+}

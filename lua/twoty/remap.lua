@@ -1,10 +1,11 @@
+---@diagnostic disable: need-check-nil
 vim.mapleader = ' '
 vim.maplocalleader = ' '
 
 local ut = require('twoty.utils')
 
 -- == for outer node lsp formatting
-ut.map_noremap('n', '==', function()
+ut.noremap('n', '==', function()
     local node = vim.treesitter.get_node()
     if node == nil then
         return
@@ -23,20 +24,22 @@ ut.map_noremap('n', '==', function()
         ['start'] = { start_row + 1, start_col },
         ['end'] = { end_row + 1, end_col },
     }
-    vim.lsp.buf.format({ range = node_range })
-    vim.diagnostic.show(nil, 0) -- formatting messess up virtual text
+    -- check if clients of current buffer that support formatting exist
+    if #vim.lsp.get_clients({ bufnr = 0, method = 'textDocument/formating' }) ~= 0 then
+        vim.lsp.buf.format({ range = node_range })
+        vim.diagnostic.show(nil, 0) -- formatting messess up virtual text
+        ut.flash_region_cur_buf(nil, node_range['start'][1] - 1, node_range['end'][1] - 1)
+    else
+        require('nvim-treesitter.incremental_selection').node_incremental(node:parent())
+        ut.feedkeys('=')
+    end
 
     -- prettier
-    ut.flash_region_cur_buf(nil, node_range['start'][1] - 1, node_range['end'][1] - 1)
     vim.notify('Formatted ' .. end_row + 1 - start_row .. ' rows', 2)
 end)
 
--- insert new line on enter in normal mode
-ut.map('n', '<M-o>', 'o<esc>')
-
-
-ut.map_noremap({ 'n', 'v' }, '<S-up>', '5<up>')
-ut.map_noremap({ 'n', 'v' }, '<S-down>', '5<down>')
+ut.noremap({ 'n', 'v' }, '<S-up>', '5<up>')
+ut.noremap({ 'n', 'v' }, '<S-down>', '5<down>')
 
 -- persistant undo
 ut.map('n', 'U', '<C-r>')
@@ -46,6 +49,8 @@ ut.map_silent('v', '<A-up>', ":m '<-2<CR>gv=gv")
 ut.map_silent('v', '<A-down>', ":m '>+1<CR>gv=gv")
 ut.map_silent('n', '<A-up>', ":m-2<CR>==")
 ut.map_silent('n', '<A-down>', ":m+1<CR>==")
+
+ut.noremap('n', '<leader>f', 'za')
 
 -- cursor next/prev
 ut.map('n', '{', '<C-o>')
@@ -62,11 +67,40 @@ ut.map('i', '<c-k>', '<nop>')
 ut.map('n', 'l', '<nop>')
 
 -- text manipulation
-
 ut.map('n', 'rwp', 'viwpyiw')
 ut.map('n', 'rWp', 'viWpyiW')
 ut.map('n', 'rwP', 'viwPyiw')
 ut.map('n', 'rWP', 'viWPvyiW')
 
--- make d just delete, leave x for cut
-ut.map('n', 'd', '"_d')
+-- save cursor placement
+ut.noremap('n', '<M-/>', function ()
+    local pos = vim.api.nvim_win_get_cursor(0)
+    ut.feedkeys('gcc')
+    vim.schedule(function ()
+        vim.api.nvim_win_set_cursor(0, pos)
+    end)
+end)
+ut.noremap('v', '<M-/>', function () ut.feedkeys('gc') end)
+ut.noremap('i', '<M-/>', function ()
+    local pos = vim.api.nvim_win_get_cursor(0)
+    ut.feedkeys('<esc>gcci')
+    vim.schedule(function ()
+        vim.api.nvim_win_set_cursor(0, pos)
+    end)
+end)
+
+-- make x just delete
+ut.map('n', 'x', '"_x')
+
+-- tabs
+ut.map('n', '<M-e>', function ()
+    vim.cmd('Tex')
+end)
+ut.map_silent('n', 'q', function ()
+    local res, _, _ = pcall(vim.api.nvim_win_close, 0, false)
+    if res then return end
+    vim.cmd('Ex')
+end)
+ut.map('n', '<M-right>', vim.cmd.tabnext)
+ut.map('n', '<M-left>', vim.cmd.tabp)
+ut.noremap('i', '<M-c><M-c>', function() ut.feedkeys('<esc>cc') end)

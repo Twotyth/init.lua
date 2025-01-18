@@ -33,13 +33,20 @@ local function picker_prev(tbufnr)
     scroll_open(tbufnr)
 end
 
-
-local function filenameFirst(_, path)
-    local tail = vim.fs.basename(path)
-    local parent = vim.fs.dirname(path)
-    if parent == "." then return tail end
-    return string.format("%s\t\t%s", tail, parent)
-end
+local global_defaults = {
+    mappings = {
+        i = {
+            ['<M-right>'] = picker_next,
+            ['<M-left>'] = picker_prev,
+            ['<esc>'] = require('telescope.actions').close
+        },
+        n = {
+            ['<M-right>'] = picker_next,
+            ['<M-left>'] = picker_prev,
+        },
+    },
+    path_display = { 'smart', 'filename_first' }
+}
 
 return {
     {
@@ -50,39 +57,14 @@ return {
         cmd = 'Telescope',
         keys = { '<leader>d', '<leader>s', '<leader>S' },
         config = function ()
-            require('twoty.utils').aucmd("FileType", {
-                pattern = "TelescopeResults",
-                callback = function(ctx)
-                    vim.api.nvim_buf_call(ctx.buf, function()
-                        vim.fn.matchadd("TelescopeParent", "\t\t.*$")
-                        vim.api.nvim_set_hl(0, "TelescopeParent", { link = "Comment" })
-                    end)
-                end,
-            })
-
             require('telescope').setup({
                 pickers = {
-                    find_files = {
-                        path_display = filenameFirst,
-                    },
+                    -- find_files = { path_display = { "smart", "filename_first" }, },
                     lsp_dynamic_workspace_symbols = {
                         entry_maker = require('twoty.custom.telescope-symbol-entry-maker').maker()
                     }
                 },
-                defaults = {
-                    layout_strategy = 'vertical',
-                    mappings = {
-                        i = {
-                            ['<M-right>'] = picker_next,
-                            ['<M-left>'] = picker_prev,
-                            ['<esc>'] = require('telescope.actions').close
-                        },
-                        n = {
-                            ['<M-right>'] = picker_next,
-                            ['<M-left>'] = picker_prev,
-                        },
-                    }
-                }
+                defaults = require('telescope.themes').get_ivy(global_defaults)
             })
 
             local bi = require('telescope.builtin')
@@ -117,14 +99,16 @@ return {
                 )
             end
 
+            local function getAsIvy (pickerFunc, opts)
+                return function () pickerFunc(theme.get_ivy(opts)) end
+            end
+
             pickers_funclist = { find_types, find_files, find_symbols }
 
             local ut = require('twoty.utils')
-            ut.map_noremap('n', '<leader>d', bi.lsp_definitions)
-            ut.map_noremap('n', '<leader>s', function() pickers_funclist[picker_index]() end)
-            ut.map_noremap('n', '<leader>S', bi.live_grep)
-
-            ut.map_noremap('n', '<leader>h', bi.help_tags)
+            ut.noremap('n', '<leader>s', function() pickers_funclist[picker_index]() end)
+            ut.noremap('n', '<leader>S', bi.live_grep)
+            ut.noremap('n', '<leader>h', bi.help_tags)
         end
     },
 }

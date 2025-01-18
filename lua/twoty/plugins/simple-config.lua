@@ -1,34 +1,26 @@
 return {
     {
         'nvim-tree/nvim-web-devicons',
-        config = function ()
+        config = function()
             require('nvim-web-devicons').setup()
         end
     },
     {
         'levouh/tint.nvim',
         lazy = true,
-        ---@type TintUserConfiguration
-        opts = {
-            tint = -7,
-            tint_background_colors = true,
-        }
-    },
-    {
-        'theprimeagen/harpoon',
-        dependencies = {
-            'nvim-lua/plenary.nvim',
-        },
-        keys = { '<leader>a', '<leader>e' },
-        config = function()
-            require('harpoon').setup({})
-            vim.keymap.set('n', '<leader>a', require("harpoon.mark").add_file)
-            vim.keymap.set('n', '<leader>e', require("harpoon.ui").toggle_quick_menu)
-        end,
+        config = function ()
+            require('tint').setup({
+                tint = -7,
+                tint_background_colors = true,
+                window_ignore_function = function(winid)
+                    return vim.api.nvim_win_get_config(winid).relative ~= ""
+                end
+            })
+        end
     },
     {
         "j-hui/fidget.nvim",
-        event = 'VeryLazy',
+        event = 'UIEnter',
         opts = {
             notification = {
                 override_vim_notify = true
@@ -36,29 +28,21 @@ return {
         }
     },
     {
-        'lukas-reineke/indent-blankline.nvim',
-        main = 'ibl',
+        'nvimdev/indentmini.nvim',
         event = 'BufReadPre',
-        ---@type ibl.config
-        opts = {
-            ---@type ibl.config.indent
-            indent = {
-                highlight = 'IndentBlanklineChar'
-            },
-            ---@type ibl.config.scope
-            scope = {
-                enabled = true,
-                show_end = false,
-                show_start = false,
-                highlight = 'IblIndent'
-            },
-        }
+        config = function()
+            require 'indentmini'.setup({
+                char = '▎'
+            })
+        end
     },
     {
         'RRethy/vim-illuminate',
-        event = 'BufReadPre',
-        lazy = false,
-        config = function ()
+        event = 'BufReadPost',
+        dependencies = {
+            'yazeed1s/oh-lucy.nvim'
+        },
+        config = function()
             require('illuminate').configure({
                 providers = { 'treesitter', 'lsp' },
                 delay = 50,
@@ -68,5 +52,27 @@ return {
             vim.api.nvim_set_hl(0, 'IlluminatedWordRead', { link = 'LspReferenceRead' })
             vim.api.nvim_set_hl(0, 'IlluminatedWordWrite', { link = 'LspReferenceWrite' })
         end
+    },
+    {
+        'petertriho/nvim-scrollbar',
+        event = 'BufReadPre',
+        config = function() require('scrollbar').setup() end
+    },
+    {
+        "folke/lazydev.nvim",
+        ft = "lua", -- only load on lua files
+        opts = {
+            library = {
+                { path = '${3rd}/luv/library', words = { 'vim%.uv' } }
+            },
+        },
+    },
+    -- { "Bilal2453/luvit-meta", lazy = true }, -- optional `vim.uv` typings
+    {
+        'sphamba/smear-cursor.nvim',
+        event = 'VeryLazy',
+        opts = {
+            cursor_color = '#52ad70',
+        }
     }
 }

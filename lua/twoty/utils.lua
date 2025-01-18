@@ -5,7 +5,7 @@ M.map = vim.keymap.set
 M.get_buf_mark = vim.api.nvim_buf_get_mark
 
 ---@param opts table|nil
-function M.map_noremap(mode, lhs, rhs, opts)
+function M.noremap(mode, lhs, rhs, opts)
     opts = opts or {}
     opts.remap = false
     vim.keymap.set(mode, lhs, rhs, opts)
@@ -45,6 +45,14 @@ end
 
 function M.highlight_g(higroup, value)
     vim.api.nvim_set_hl(0, higroup, value)
+end
+
+---@param str string
+---@param start string
+---@return boolean
+function M:startswith(str, start)
+    vim.notify(str .. ' ' .. start)
+    return str:find(start, 1, true) == 1
 end
 
 

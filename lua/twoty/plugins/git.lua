@@ -1,7 +1,9 @@
+local ut = require('twoty.utils')
+
 return {
     {
         'lewis6991/gitsigns.nvim',
-        event = 'VeryLazy',
+        event = 'UIEnter',
         opts = {
             on_attach = function (bufnr)
                 local function map(mode, l, r, opts)
@@ -11,30 +13,49 @@ return {
                 end
                 local gs = package.loaded.gitsigns
                 -- git preview
-                map('n', 'gp', gs.preview_hunk_inline)
+                map('n', '<M-d>', gs.preview_hunk_inline)
                 -- map('n', 'gd', gs.diffthis)
-                -- map('n', 'gu', gs.reset_hunk)
+                map('n', '<M-z>', gs.reset_hunk)
+
+                -- Navigation
+                map({'n', 'i'}, '<c-down>', function()
+                    if vim.wo.diff then
+                        vim.cmd.normal({ ']c', bang = true })
+                    else
+                        gs.nav_hunk('next')
+                    end
+                end)
+                map({'n', 'i'}, '<c-up>', function()
+                    if vim.wo.diff then
+                        vim.cmd.normal({ '[c', bang = true })
+                    else
+                        gs.nav_hunk('prev')
+                    end
+                end)
             end
         },
     },
     {
-        'NeogitOrg/neogit',
-        keys = '<leader>g',
+        'SuperBo/fugit2.nvim',
+        keys = { '<leader>g' },
+        dependencies = {
+            'MunifTanjim/nui.nvim',
+            'nvim-tree/nvim-web-devicons',
+            'nvim-lua/plenary.nvim',
+            {
+                'chrisgrieser/nvim-tinygit', -- optional: for Github PR view
+                dependencies = { 'stevearc/dressing.nvim' }
+            },
+        },
+        cmd = { 'Fugit2', 'Fugit2Diff', 'Fugit2Graph' },
         config = function ()
-            local neogit = require('neogit')
-            neogit.setup({
-                graph_style = "unicode",
-                disable_context_highlighting = true,
-                status = { recent_commit_count = 10 },
-                signs = {
-                    section = { '', '' },
-                    item = { ' ', '' }
-                }
+            local g = require('fugit2')
+            ---@diagnostic disable-next-line: missing-fields
+            g.setup({
+                min_width = 70
             })
-            vim.keymap.set('n', '<leader>g', function ()
-                neogit.open( { kind = 'split' } )
-                vim.wo.wrap = true
-            end)
+
+            ut.map('n', '<leader>g', '<cmd>Fugit2<cr>')
         end
     },
 }

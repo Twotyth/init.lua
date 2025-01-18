@@ -2,6 +2,11 @@ local treesitter = {
     'nvim-treesitter/nvim-treesitter',
     event = 'VeryLazy',
     build = ':TSUpdate',
+    lazy = vim.fn.argc(-1) == 0,
+    init = function(plugin)
+        require('lazy.core.loader').add_to_rtp(plugin)
+        require("nvim-treesitter.query_predicates")
+    end,
     config = function ()
         local configs = require("nvim-treesitter.configs")
 
@@ -20,9 +25,8 @@ local treesitter = {
             }
         })
 
-        vim.opt.foldmethod = 'expr'
-        -- vim.opt.foldexpr =
-        require('twoty.utils').map_noremap('n', '<leader>i', vim.inspect_pos)
+
+        require('twoty.utils').noremap('n', '<leader>i', vim.inspect_pos)
     end
 }
 

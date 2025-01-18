@@ -41,7 +41,15 @@ return {
             oh_theme.base.DiffDelete = diff_delete
             oh_theme.base.DiffChange = diff_change
             oh_theme.base.NormalFloat.bg = colors.bg
+            -- oh_theme.base.NormalNC.bg = colors.dark
             oh_theme.base.Search = { bg = '#08335E', fg = 'none' }
+
+            oh_theme.base.StatusLine = { bg = '#1a1a1a' }
+            oh_theme.base.StatusLineNC = { bg = '#1a1a1a' }
+            oh_theme.base.TabLine.style = 'italic'
+            oh_theme.base.TabLine.bg = colors.none
+            oh_theme.base.NonText.fg = colors.cl_bg
+
 
             oh_theme.base["@boolean"] = { fg = colors.boolean }
             oh_theme.base["@number"] = { fg = colors.pink }
@@ -50,18 +58,26 @@ return {
             oh_theme.base["@variable.member"] = property
             oh_theme.base["@variable.parameter"] = { fg = colors.fg, style = 'italic' }
             oh_theme.base["@namespace"] = { fg = colors.fg }
+            oh_theme.base["@lsp.type.namespace"] = { fg = colors.blue_type }
             oh_theme.base["@lsp.type.struct"] = { fg = '#E1BFFF' }
             oh_theme.base["@lsp.type.enum"] = { fg = '#E1BFFF' }
 
 
-            oh_theme.plugins.DiagnosticSignHint.bg = oh_theme.plugins.DiagnosticSignHint.fg
-            oh_theme.plugins.DiagnosticSignError.bg = oh_theme.plugins.DiagnosticSignError.fg
-            oh_theme.plugins.DiagnosticSignWarn.bg = oh_theme.plugins.DiagnosticSignWarn.fg
-            oh_theme.plugins.DiagnosticSignInfo.bg = oh_theme.plugins.DiagnosticSignHint.fg
+            oh_theme.plugins.Directory = property
+            oh_theme.plugins.IndentLine = oh_theme.plugins.IndentBlanklineChar
+            oh_theme.plugins.IndentLineCurrent = oh_theme.base.NonText
+            oh_theme.plugins.CursorColumn = { bg = colors.comment }
+
+            -- oh_theme.plugins.DiagnosticSignHint.bg = oh_theme.plugins.DiagnosticSignHint.fg
+            -- oh_theme.plugins.DiagnosticSignError.bg = oh_theme.plugins.DiagnosticSignError.fg
+            -- oh_theme.plugins.DiagnosticSignWarn.bg = oh_theme.plugins.DiagnosticSignWarn.fg
+            -- oh_theme.plugins.DiagnosticSignInfo.bg = oh_theme.plugins.DiagnosticSignHint.fg
 
             oh_theme.plugins.GitSignsAdd = { fg = diff_add_lighter.bg }
+            oh_theme.plugins.GitSignsAddPreview = diff_add
             oh_theme.plugins.GitSignsChange = { fg = diff_change_lighter.bg }
             oh_theme.plugins.GitSignsDelete = { fg = diff_delete_lighter.bg }
+            oh_theme.plugins.GitSignsDeletePreview = diff_delete
 
             oh_theme.plugins.GitSignsAddInline = diff_add_lighter
             oh_theme.plugins.GitSignsAddLnInline = diff_add_lighter
@@ -78,21 +94,6 @@ return {
             oh_theme.plugins.GitSignsChangeVirtLnInline = diff_add_lighter
             oh_theme.plugins.GitSignsChangeLnVirtLnInLine = diff_add_lighter
 
-
-
-            oh_theme.plugins.NeogitBranch = { fg = colors.yellow, style = 'bold' }
-            oh_theme.plugins.NeogitFold = { fg = colors.comment }
-            oh_theme.plugins.NeogitCursorLine = { bg = colors.none }
-
-            oh_theme.plugins.NeogitDiffAdd.bg = diff_add.bg
-            oh_theme.plugins.NeogitDiffDelete.bg = diff_delete.bg
-
-            oh_theme.plugins.NeogitChangeModified = { fg = colors.comment, style = 'italic' }
-            oh_theme.plugins.NeogitChangeAdded = { fg = colors.green, style = 'italic' }
-            oh_theme.plugins.NeogitChangeDeleted = { fg = colors.red_err, style = 'italic' }
-
-
-
             oh_theme.plugins.TelescopeResultClass = { fg = colors.blue_type }
             oh_theme.plugins.TelescopeResultField = property
             oh_theme.plugins.TelescopeResultStruct = oh_theme.base.Structure
@@ -104,7 +105,6 @@ return {
             ut.highlight_g('@lsp.mod.static', { italic = true })
             ut.highlight_g('@lsp.type.field', { link = '@variable.member' })
             ut.highlight_g('@lsp.type.property', { link = '@variable.member' })
-            ut.highlight_g('@lsp.type.namespace', { link = '@variable' })
             ut.highlight_g('@lsp.type.keyword', { link = '@keyword' })
             ut.highlight_g('@lsp.type.parameter', { link = '@variable.parameter' })
             ut.highlight_g('@lsp.typemod.function.declaration', { bold = true })
@@ -133,6 +133,20 @@ return {
             require('tint').setup({
                 tint = -7,
                 tint_background_colors = true,
+            })
+        end
+    },
+    {
+        "doums/suit.nvim",
+        event = "VeryLazy",
+        config = function ()
+            require('suit').setup({
+                input = {
+                    border = 'rounded',
+                },
+                select = {
+                    border = 'rounded',
+                },
             })
         end
     }
