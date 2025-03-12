@@ -33,20 +33,6 @@ local function picker_prev(tbufnr)
     scroll_open(tbufnr)
 end
 
-local global_defaults = {
-    mappings = {
-        i = {
-            ['<M-right>'] = picker_next,
-            ['<M-left>'] = picker_prev,
-            ['<esc>'] = require('telescope.actions').close
-        },
-        n = {
-            ['<M-right>'] = picker_next,
-            ['<M-left>'] = picker_prev,
-        },
-    },
-    path_display = { 'smart', 'filename_first' }
-}
 
 return {
     {
@@ -57,6 +43,21 @@ return {
         cmd = 'Telescope',
         keys = { '<leader>d', '<leader>s', '<leader>S' },
         config = function ()
+            local global_defaults = {
+                mappings = {
+                    i = {
+                        ['<M-right>'] = picker_next,
+                        ['<M-left>'] = picker_prev,
+                        ['<esc>'] = require('telescope.actions').close
+                    },
+                    n = {
+                        ['<M-right>'] = picker_next,
+                        ['<M-left>'] = picker_prev,
+                    },
+                },
+                path_display = { 'smart', 'filename_first' }
+            }
+
             require('telescope').setup({
                 pickers = {
                     -- find_files = { path_display = { "smart", "filename_first" }, },
@@ -97,10 +98,6 @@ return {
                         default_text = picker_search
                     })
                 )
-            end
-
-            local function getAsIvy (pickerFunc, opts)
-                return function () pickerFunc(theme.get_ivy(opts)) end
             end
 
             pickers_funclist = { find_types, find_files, find_symbols }

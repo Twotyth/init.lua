@@ -28,15 +28,6 @@ return {
         }
     },
     {
-        'nvimdev/indentmini.nvim',
-        event = 'BufReadPre',
-        config = function()
-            require 'indentmini'.setup({
-                char = '▎'
-            })
-        end
-    },
-    {
         'RRethy/vim-illuminate',
         event = 'BufReadPost',
         dependencies = {
@@ -72,7 +63,7 @@ return {
         'sphamba/smear-cursor.nvim',
         event = 'VeryLazy',
         opts = {
-            cursor_color = '#52ad70',
+            cursor_color = '#ded7d0',
         }
     }
 }

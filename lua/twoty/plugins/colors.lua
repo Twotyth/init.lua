@@ -58,6 +58,7 @@ return {
             oh_theme.base["@variable.member"] = property
             oh_theme.base["@variable.parameter"] = { fg = colors.fg, style = 'italic' }
             oh_theme.base["@namespace"] = { fg = colors.fg }
+            oh_theme.base["@type.definition"] = { fg = colors.blue_type, style = 'italic' }
             oh_theme.base["@lsp.type.namespace"] = { fg = colors.blue_type }
             oh_theme.base["@lsp.type.struct"] = { fg = '#E1BFFF' }
             oh_theme.base["@lsp.type.enum"] = { fg = '#E1BFFF' }
@@ -136,18 +137,4 @@ return {
             })
         end
     },
-    {
-        "doums/suit.nvim",
-        event = "VeryLazy",
-        config = function ()
-            require('suit').setup({
-                input = {
-                    border = 'rounded',
-                },
-                select = {
-                    border = 'rounded',
-                },
-            })
-        end
-    }
 }

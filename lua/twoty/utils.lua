@@ -23,6 +23,7 @@ end
 
 
 local augroup = vim.api.nvim_create_augroup('Twoty', {})
+---@param opts vim.api.keyset.create_autocmd
 function M.aucmd(evt, opts)
     opts = opts or {}
     opts.group = augroup

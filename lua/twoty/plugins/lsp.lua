@@ -5,30 +5,24 @@ local lsp = {
     dependencies = {
         'williamboman/mason.nvim',
         'williamboman/mason-lspconfig.nvim',
-        'Decodetalkers/csharpls-extended-lsp.nvim',
         'Saghen/blink.cmp',
     },
     config = function()
         local function capabilities(opts)
             return require 'blink.cmp'.get_lsp_capabilities(opts or {})
         end
-        require('mason').setup()
+        require('mason').setup({
+            registries = {
+                "github:mason-org/mason-registry",
+                "github:crashdummyy/mason-registry"
+            }
+        })
         require('mason-lspconfig').setup({
-            ensure_installed = { 'lua_ls', 'clangd', 'omnisharp', 'gopls' },
+            ensure_installed = { 'lua_ls', 'clangd' },
             handlers = {
                 function(server_name)
                     require('lspconfig')[server_name].setup(capabilities())
                 end,
-                ['csharp_ls'] = function()
-                    local config = {
-                        handlers = {
-                            ["textDocument/definition"] = require('csharpls_extended').handler,
-                            ["textDocument/typeDefinition"] = require('csharpls_extended').handler,
-                        },
-                    }
-
-                    require('lspconfig').csharp_ls.setup(capabilities(config))
-                end
             },
         })
     end,
@@ -78,5 +72,14 @@ return {
     {
         'artemave/workspace-diagnostics.nvim',
         event = 'LspAttach'
+    },
+    {
+        "seblyng/roslyn.nvim",
+        ft = "cs",
+        ---@module 'roslyn.config'
+        ---@type RoslynNvimConfig
+        opts = {
+            -- your configuration comes here; leave empty for default settings
+        }
     }
 }
