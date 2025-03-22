@@ -94,12 +94,15 @@ ut.map('n', 'x', '"_x')
 
 -- tabs
 ut.map('n', '<M-e>', function ()
-    vim.cmd('Tex')
+    vim.cmd.tabe()
+    Snacks.explorer.open()
 end)
+
 ut.map_silent('n', 'q', function ()
     local res, _, _ = pcall(vim.api.nvim_win_close, 0, false)
     if res then return end
-    vim.cmd('Ex')
+    vim.cmd.enew()
+    Snacks.explorer.open()
 end)
 ut.map('n', '<M-right>', vim.cmd.tabnext)
 ut.map('n', '<M-left>', vim.cmd.tabp)

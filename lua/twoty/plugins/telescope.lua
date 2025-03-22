@@ -48,7 +48,7 @@ return {
                     i = {
                         ['<M-right>'] = picker_next,
                         ['<M-left>'] = picker_prev,
-                        ['<esc>'] = require('telescope.actions').close
+                        ['<esc>'] = require('telescope.actions').close,
                     },
                     n = {
                         ['<M-right>'] = picker_next,
@@ -60,10 +60,10 @@ return {
 
             require('telescope').setup({
                 pickers = {
-                    -- find_files = { path_display = { "smart", "filename_first" }, },
-                    lsp_dynamic_workspace_symbols = {
-                        entry_maker = require('twoty.custom.telescope-symbol-entry-maker').maker()
-                    }
+                    find_files = { path_display = { "smart", "filename_first" }, },
+                    -- lsp_dynamic_workspace_symbols = {
+                    --     entry_maker = require('twoty.custom.telescope-symbol-entry-maker').maker()
+                    -- }
                 },
                 defaults = require('telescope.themes').get_ivy(global_defaults)
             })

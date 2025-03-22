@@ -128,7 +128,7 @@ return {
     },
     {
         'levouh/tint.nvim',
-        event = 'UIEnter',
+        event = 'VeryLazy',
         config = function()
             ---@type TintUserConfiguration
             require('tint').setup({

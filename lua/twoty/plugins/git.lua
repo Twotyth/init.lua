@@ -1,9 +1,7 @@
-local ut = require('twoty.utils')
-
 return {
     {
         'lewis6991/gitsigns.nvim',
-        event = 'UIEnter',
+        event = 'VeryLazy',
         opts = {
             on_attach = function (bufnr)
                 local function map(mode, l, r, opts)
@@ -37,7 +35,7 @@ return {
     },
     {
         'SuperBo/fugit2.nvim',
-        keys = { '<leader>g' },
+        keys = { { '<leader>g', '<cmd>Fugit2<cr>' } },
         dependencies = {
             'MunifTanjim/nui.nvim',
             'nvim-tree/nvim-web-devicons',
@@ -45,14 +43,6 @@ return {
             'chrisgrieser/nvim-tinygit',     -- optional: for Github PR view
         },
         cmd = { 'Fugit2', 'Fugit2Diff', 'Fugit2Graph' },
-        config = function ()
-            local g = require('fugit2')
-            ---@diagnostic disable-next-line: missing-fields
-            g.setup({
-                min_width = 70
-            })
-
-            ut.map('n', '<leader>g', '<cmd>Fugit2<cr>')
-        end
+        opts = { min_width = 70 }
     },
 }

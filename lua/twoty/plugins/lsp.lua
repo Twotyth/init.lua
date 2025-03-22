@@ -69,10 +69,7 @@ return {
     lsp,
     blinkcmp,
     trouble,
-    {
-        'artemave/workspace-diagnostics.nvim',
-        event = 'LspAttach'
-    },
+    { 'artemave/workspace-diagnostics.nvim', event = 'LspAttach' },
     {
         "seblyng/roslyn.nvim",
         ft = "cs",

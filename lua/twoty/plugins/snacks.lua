@@ -2,6 +2,7 @@ return {
     "folke/snacks.nvim",
     priority = 1000,
     lazy = false,
+    ---@module "snacks"
     ---@type snacks.Config
     opts = {
         bigfile = { enabled = true },
@@ -13,12 +14,21 @@ return {
         },
         input = { enabled = true, },
         quickfile = { enabled = true },
-        picker = { enabled = true },
-        -- scope = { enabled = true },
+        explorer = { enabled = true, replace_netrw = true },
+        picker = {
+            enabled = true,
+            win = {
+                input = {
+                    keys = {
+                        ['esc'] = { 'close', mode = { 'n', 'i' } },
+                    }
+                },
+            },
+        },
         statuscolumn = {
             enabled = true,
-            left = { "fold", "git" }, -- priority of signs on the right (high to low)
-            right = { "mark", "sign" }, -- priority of signs on the left (high to low)
+            left = { "fold", "git" },
+            right = { "mark", "sign" },
         },
         styles = {
             input = {
@@ -29,11 +39,24 @@ return {
                     i_esc = { '<esc>', { 'cmp_close', 'cancel' }, mode = 'i', expr = true },
                 }
             },
-            picker = {
-                keys = {
-                    i_esc = { '<esc>', { 'cmp_close', 'cancel' }, mode = 'i', expr = true },
-                }
-            }
-        }
+        },
     },
+    ---@module "lazy"
+    ---@type LazyKeysSpec[]
+    keys = {
+        {
+            '<M-1>',
+            function()
+                local active = (Snacks.picker.get({ source = 'explorer' }) or {})[1]
+                if not active then
+                    Snacks.explorer.open()
+                elseif active:current_win() then
+                    active:close()
+                else
+                    active:focus()
+                end
+            end,
+            { 'n', 'i' }
+        }
+    }
 }

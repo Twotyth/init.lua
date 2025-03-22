@@ -1,22 +1,15 @@
 return {
-    {
-        'nvim-tree/nvim-web-devicons',
-        config = function()
-            require('nvim-web-devicons').setup()
-        end
-    },
+    { 'nvim-tree/nvim-web-devicons', opts = {} },
     {
         'levouh/tint.nvim',
         lazy = true,
-        config = function ()
-            require('tint').setup({
-                tint = -7,
-                tint_background_colors = true,
-                window_ignore_function = function(winid)
-                    return vim.api.nvim_win_get_config(winid).relative ~= ""
-                end
-            })
-        end
+        opts = {
+            tint = -7,
+            tint_background_colors = true,
+            window_ignore_function = function(winid)
+                return vim.api.nvim_win_get_config(winid).relative ~= ""
+            end
+        }
     },
     {
         "j-hui/fidget.nvim",
@@ -27,28 +20,28 @@ return {
             }
         }
     },
-    {
-        'RRethy/vim-illuminate',
-        event = 'BufReadPost',
-        dependencies = {
-            'yazeed1s/oh-lucy.nvim'
-        },
-        config = function()
-            require('illuminate').configure({
-                providers = { 'treesitter', 'lsp' },
-                delay = 50,
-            })
-
-            vim.api.nvim_set_hl(0, 'IlluminatedWordText', { link = 'LspReferenceText' })
-            vim.api.nvim_set_hl(0, 'IlluminatedWordRead', { link = 'LspReferenceRead' })
-            vim.api.nvim_set_hl(0, 'IlluminatedWordWrite', { link = 'LspReferenceWrite' })
-        end
-    },
-    {
-        'petertriho/nvim-scrollbar',
-        event = 'BufReadPre',
-        config = function() require('scrollbar').setup() end
-    },
+    -- {
+    --     'RRethy/vim-illuminate',
+    --     event = 'BufReadPost',
+    --     dependencies = {
+    --         'yazeed1s/oh-lucy.nvim'
+    --     },
+    --     config = function()
+    --         require('illuminate').configure({
+    --             providers = { 'lsp' },
+    --             delay = 50,
+    --         })
+    --
+    --         vim.api.nvim_set_hl(0, 'IlluminatedWordText', { link = 'LspReferenceText' })
+    --         vim.api.nvim_set_hl(0, 'IlluminatedWordRead', { link = 'LspReferenceRead' })
+    --         vim.api.nvim_set_hl(0, 'IlluminatedWordWrite', { link = 'LspReferenceWrite' })
+    --     end
+    -- },
+    -- {
+    --     'petertriho/nvim-scrollbar',
+    --     event = 'BufReadPre',
+    --     config = function() require('scrollbar').setup() end
+    -- },
     {
         "folke/lazydev.nvim",
         ft = "lua", -- only load on lua files
@@ -63,7 +56,8 @@ return {
         'sphamba/smear-cursor.nvim',
         event = 'VeryLazy',
         opts = {
-            cursor_color = '#ded7d0',
+            smear_insert_mode = false,
+            cursor_color = '#52ad70',
         }
     }
 }
